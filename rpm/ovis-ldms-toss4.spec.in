@@ -8,6 +8,9 @@
 %bcond_without kafka
 %bcond_without slingshot
 %bcond_with genders
+%bcond_without rabbitkw
+%bcond_without ibnet
+%bcond_without tests
 
 %ifarch ppc64le
   %undefine with_slurm
@@ -72,6 +75,10 @@ BuildRequires: openssl-devel
 BuildRequires: librdmacm-devel libibverbs-devel
 BuildRequires: libibmad libibmad-devel
 BuildRequires: libibumad libibumad-devel
+%if %{with ibnet}
+Requires: opensm-devel
+BuildRequires: opensm-devel
+%endif
 %if %{with python}
 BuildRequires: python36-devel
 BuildRequires: python3-Cython
@@ -94,6 +101,10 @@ BuildRequires: papi600-devel
 BuildRequires: librdkafka-devel
 Requires: librdkafka
 %endif
+%if %{with rabbitkw}
+Requires: librabbitmq
+BuildRequires: librabbitmq-devel
+%endif
 
 Url: https://github.com/ovis-hpc/ovis
 
@@ -108,6 +119,7 @@ export CFLAGS="-g -O2 -fdiagnostics-color=auto %{optflags}"
 %configure \
     CC=gcc CXX=g++ \
     --disable-static \
+    --enable-nola \
     --enable-munge \
     --enable-ssl \
     --enable-rdma \
@@ -118,14 +130,19 @@ export CFLAGS="-g -O2 -fdiagnostics-color=auto %{optflags}"
     --disable-procdiskstats \
     --disable-generic_sampler \
     --enable-jobid \
+    --enable-ipmireader \
+    --enable-filesingle \
     %{?with_genders:--enable-libgenders --enable-genderssystemd}%{!?with_genders:--disable-libgenders --disable-genderssystemd} \
     %{?with_python:--enable-python}%{!?with_python:--disable-python} \
     %{?with_slurm:--with-slurm}%{!?with_slurm:--without-slurm} \
     %{?with_dcgm:--with-dcgm}%{!?with_dcgm:--without-dcgm} \
-    %{?with_infiniband:--enable-infiniband}%{!?with_infiniband:--disable-infiniband} \
+    %{?with_infiniband:--enable-infiniband --enable-opa2}%{!?with_infiniband:--disable-infiniband --disable-opa2} \
+    %{?with_ibnet:--enable-ibnet}%{!?with_ibnet:--disable-ibnet} \
     %{?with_rdc:--enable-rdc RDC_CFLAGS=-I/opt/rocm-%{rocm_version}/rdc/include RDC_LIBS=-L/opt/rocm-%{rocm_version}/rdc/lib}%{!?with_rdc:--disable-rdc} \
     %{?with_kafka:--enable-kafka}%{!?with_kafka:--disable-kafka} \
     %{?with_slingshot:--enable-slingshot}%{!?with_slingshot:--disable-slingshot} \
+    %{?with_rabbitkw:--enable-rabbitkw}%{!?with_rabbitkw:--disable-rabbitkw} \
+    %{?with_tests:--enable-slurmtest --enable-ldms-test}%{!?with_tests:--disable-slurmtest --disable-ldms-test} \
 %if %{with papi}
     --enable-papi \
     --with-libpapi-prefix=/usr/papi600 \
@@ -181,6 +198,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_sysconfdir}/sysconfig/ldms.d/ldmsd.all_instances.conf.example
 %config(noreplace) %{_sysconfdir}/sysconfig/ldms.d/ldmsd.local.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/ldms.d/plugins-conf/*
+%if %{with tests}
+%exclude %{_bindir}/pll-ldms-static-test.sh
+%exclude %{_pkgdocdir}/examples/slurm-test
+%exclude %{_mandir}/*/pll-ldms-static-test*
+%exclude %{_libdir}/*/ldms-run-static-tests.test
+%exclude %{_libdir}/*/ldms-static-test-bypass
+%exclude %{_libdir}/*/ldms-static-test-list.sh
+%exclude %{_libdir}/*/libgrptest*
+%exclude %{_libdir}/*/libtest_sampler*
+%exclude %{_sbindir}/test_ldms*
+%endif
 %endif
 
 %package devel
@@ -269,6 +297,28 @@ LDMS sampler plugin that supports AMD GPUs
 %{_libdir}/*/*rdc_sampler*
 %{_mandir}/*/*_rdc_*
 %{_mandir}/*/*_rdc_*
+%endif
+
+%if %{with tests}
+%package tests
+Summary: LDMS tests
+Group: System Environment/Base
+# Because of the way we handle /opt (where rocm is installed)
+# in TOSS, we can not have an explicit Requires on it here.
+#Requires: rocm-%{rocm_version}
+%description tests
+Tests for the LDMS
+%files tests
+%defattr(-,root,root,-)
+%{_bindir}/pll-ldms-static-test.sh
+%{_pkgdocdir}/examples/slurm-test
+%{_mandir}/*/pll-ldms-static-test*
+%{_libdir}/*/ldms-run-static-tests.test
+%{_libdir}/*/ldms-static-test-bypass
+%{_libdir}/*/ldms-static-test-list.sh
+%{_libdir}/*/libgrptest*
+%{_libdir}/*/libtest_sampler*
+%{_sbindir}/test_ldms*
 %endif
 
 %changelog
