@@ -12,6 +12,7 @@
 %bcond_without ibnet
 %bcond_without tests
 %bcond_without avrokafka
+%bcond_without zfs
 
 %ifarch ppc64le
   %undefine with_slurm
@@ -116,6 +117,10 @@ Requires: avro-c
 Requires: librabbitmq
 BuildRequires: librabbitmq-devel
 %endif
+%if %{with zfs}
+Requires: libzfs5
+BuildRequires: libzfs5-devel
+%endif
 
 Url: https://github.com/ovis-hpc/ovis
 
@@ -154,6 +159,7 @@ export CFLAGS="-g -O2 -fdiagnostics-color=auto %{optflags}"
     %{?with_avrokafka:--enable-store-avro-kafka}%{!?with_avrokafka:--disable-store-avro-kafka} \
     %{?with_slingshot:--enable-slingshot}%{!?with_slingshot:--disable-slingshot} \
     %{?with_rabbitkw:--enable-rabbitkw}%{!?with_rabbitkw:--disable-rabbitkw} \
+    %{?with_zfs:--enable-zfs}%{!?with_zfs:--disable-zfs} \
     %{?with_tests:--enable-slurmtest --enable-ldms-test}%{!?with_tests:--disable-slurmtest --disable-ldms-test} \
 %if %{with papi}
     --enable-papi \

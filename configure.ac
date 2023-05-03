@@ -923,9 +923,6 @@ AS_IF([test "x$enable_slingshot" = xyes],[
         [AC_MSG_ERROR([libcxi or its headers not found])])
 ])
 
-
-
-
 AC_ARG_ENABLE([zfs],
     [AS_HELP_STRING([--enable-zfs], [require the zfs related plugins @<:@default=check@:>@])],
     [],
@@ -936,7 +933,6 @@ AS_IF([test "x$enable_zfs" = xyes],[
     AS_IF([test "x$HAVE_ZFS" = xno],
         [AC_MSG_ERROR([libzfs or its headers not found])])
 ])
-
 
 # define substitutions for configvars and other sed-generated files.
 # note carefully the escapes.
