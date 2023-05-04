@@ -31,40 +31,9 @@ jobs:
       run: |
         make dist
         echo TARBALL_NAME=$(ls *.tar.gz | head -1) >> $GITHUB_ENV
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-    - name: Upload Tarball
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a pload_url See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-        asset_path: ./${{ env.TARBALL_NAME }}
-        asset_name: ${{ env.TARBALL_NAME }}
-        asset_content_type: application/gzip
-    - name: Upload TOSS Spec File
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./rpm/ovis-ldms-toss3.spec
-        asset_name: ovis-ldms-toss3.spec
-        asset_content_type: text/plain
-    - name: Upload TOSS Spec File
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./rpm/ovis-ldms-toss4.spec
-        asset_name: ovis-ldms-toss4.spec
-        asset_content_type: text/plain
+        files: |
+          ./${{ env.TARBALL_NAME }}
+          ./rpm/ovis-ldms-toss*.spec
