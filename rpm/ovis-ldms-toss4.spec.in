@@ -136,8 +136,8 @@ Requires: jansson
 BuildRequires: jansson-devel
 %endif
 %if %{with variorum}
-Requires: variorum
-BuildRequires: variorum
+Requires: variorum >= 0.8.0
+BuildRequires: variorum >= 0.8.0
 %endif
 
 Url: https://github.com/ovis-hpc/ovis
