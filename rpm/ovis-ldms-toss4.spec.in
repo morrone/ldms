@@ -33,7 +33,7 @@
 %endif
 
 %global tarball_version @VERSION@
-%global rocm_version 6.3.1
+%global rocm_version 6.4.1
 
 %undefine _missing_build_ids_terminate_build
 # Because of the way we handle /opt in TOSS, we can not have a Requires
@@ -173,7 +173,7 @@ export CFLAGS="-g -O2 -fdiagnostics-color=auto %{optflags}"
     %{?with_infiniband:--enable-infiniband --enable-opa2}%{!?with_infiniband:--disable-infiniband --disable-opa2} \
     %{?with_ibnet:--enable-ibnet}%{!?with_ibnet:--disable-ibnet} \
     %{?with_rdc:--enable-rdc --with-librdc_bootstrap-prefix=/opt/rocm-%{rocm_version} --with-librdc_ras-prefix=/opt/rocm-%{rocm_version}/rdc}%{!?with_rdc:--disable-rdc} \
-    %{?with_kafka:--enable-kafka}%{!?with_kafka:--disable-kafka} \
+    %{?with_kafka:--with-kafka}%{!?with_kafka:--without-kafka} \
     %{?with_avrokafka:--enable-store-avro-kafka}%{!?with_avrokafka:--disable-store-avro-kafka} \
     %{?with_slingshot:--enable-slingshot}%{!?with_slingshot:--disable-slingshot} \
     %{?with_rabbitkw:--enable-rabbitkw}%{!?with_rabbitkw:--disable-rabbitkw} \
