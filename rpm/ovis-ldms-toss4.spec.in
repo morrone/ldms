@@ -329,9 +329,9 @@ Python files for ovis
 %package dcgm-sampler
 Summary: LDMS sampler plugin that supports Nvidia DCGM
 Group: System Environment/Base
-BuildRequires: datacenter-gpu-manager-4
+BuildRequires: datacenter-gpu-manager-4-core
 BuildRequires: datacenter-gpu-manager-4-devel
-Requires: datacenter-gpu-manager-4
+Requires: datacenter-gpu-manager-4-core
 %description dcgm-sampler
 LDMS sampler plugin that supports Nvidia DCGM
 %files dcgm-sampler
