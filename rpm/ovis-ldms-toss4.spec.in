@@ -15,6 +15,7 @@
 %bcond_without zfs
 %bcond_without jansson
 %bcond_without variorum
+%bcond_without libfabric
 
 %ifarch ppc64le
   %undefine with_slurm
@@ -23,6 +24,7 @@
   %undefine with_avrokafka
   %undefine with_kafka
   %undefine with_variorum
+  %undefine with_libfabric
 %endif
 %ifarch aarch64
   %undefine with_rdc
@@ -139,6 +141,10 @@ BuildRequires: jansson-devel
 Requires: variorum >= 0.8.0
 BuildRequires: variorum >= 0.8.0
 %endif
+%if %{with libfabric}
+Requires: libfabric
+BuildRequires: libfabric-devel
+%endif
 
 Url: https://github.com/ovis-hpc/ovis
 
@@ -180,6 +186,7 @@ export CFLAGS="-g -O2 -fdiagnostics-color=auto %{optflags}"
     %{?with_zfs:--enable-zfs}%{!?with_zfs:--disable-zfs} \
     %{?with_tests:--enable-slurmtest --enable-ldms-test}%{!?with_tests:--disable-slurmtest --disable-ldms-test} \
     %{?with_variorum:--enable-variorum}%{!?with_variorum:--disable-variorum} \
+    %{?with_libfabric:--with-libfabric}%{!?with_libfabric:--without-libfabric} \
 %if %{with papi}
     --enable-papi \
     --with-libpapi-prefix=/usr/papi600 \
