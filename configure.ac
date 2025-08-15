@@ -38,7 +38,7 @@ AX_PREFIX_CONFIG_H_G(ovis-ldms-config.h,,,[
 AM_PROG_LIBTOOL
 gl_INIT
 AC_LIB_RPATH
-
+#blah blah blah
 dnl if LEX is not available, the configure still won't fail
 AC_PROG_LEX
 AC_PROG_LN_S
